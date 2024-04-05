@@ -1,19 +1,25 @@
 {
-  "name": "pglite-protocol",
-  "description": "Wire Protocol Server for PGlite",
-  "version": "0.0.0",
-  "author": "Kamil Ogórek <kamil.ogorek@gmail.com>",
-  "license": "MIT",
-  "main": "main.js",
-  "type": "module",
-  "scripts": {
-    "start": "bun run main.ts",
-    "watch": "bun run --watch main.ts"
-  },
-  "dependencies": {
-    "@electric-sql/pglite": "^0.1.1",
-    "@types/bun": "^1.0.12",
-    "@types/node": "^20.12.2",
-    "typescript": "^5.4.3"
-  }
+	"name": "pglite-server",
+	"description": "Wire Protocol Server for PGlite",
+	"version": "0.0.0",
+	"author": "Kamil Ogórek <kamil.ogorek@gmail.com>",
+	"license": "MIT",
+	"main": "main.js",
+	"type": "module",
+	"scripts": {
+		"lint": "biome check .",
+		"check": "tsc --noEmit",
+		"test": "vitest"
+	},
+	"dependencies": {
+		"@electric-sql/pglite": "^0.1.1"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^1.6.4",
+		"@types/bun": "latest",
+		"knip": "^5.8.0",
+		"postgres": "^3.4.4",
+		"typescript": "^5.4.4",
+		"vitest": "^1.4.0"
+	}
 }
