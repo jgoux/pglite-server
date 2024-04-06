@@ -5,6 +5,7 @@ import { createServer } from "../src/server.js";
 
 export async function getDatabaseServer(port?: number) {
 	const db = new PGlite();
+	await db.waitReady;
 	const server = await createServer(db);
 
 	await new Promise((resolve) => {

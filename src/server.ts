@@ -6,14 +6,6 @@ import { createMessageResponse } from "./responses.js";
 export async function createServer(db: PGlite, opts = {}) {
 	const server = net.createServer(opts);
 
-	// lol. let's wait for a real fix: https://github.com/electric-sql/pglite/issues/74
-	while (true) {
-		if (db.ready) {
-			break;
-		}
-		await new Promise((resolve) => setTimeout(resolve, 100));
-	}
-
 	server.on("connection", (socket) => {
 		let clientBuffer = Buffer.allocUnsafe(0);
 		const clientAddr = `${socket.remoteAddress}:${socket.remotePort}`;
