@@ -1,7 +1,10 @@
 import * as net from "node:net";
 import type { PGlite } from "@electric-sql/pglite";
+import debug from "debug";
 import { parseMessage } from "./messages.js";
 import { createMessageResponse } from "./responses.js";
+
+const log = debug("pglite:server");
 
 export async function createServer(db: PGlite, opts = {}) {
 	const server = net.createServer(opts);
@@ -10,7 +13,7 @@ export async function createServer(db: PGlite, opts = {}) {
 		let clientBuffer = Buffer.allocUnsafe(0);
 		const clientAddr = `${socket.remoteAddress}:${socket.remotePort}`;
 
-		console.log(`Client connected: ${clientAddr}`);
+		log(`Client connected: ${clientAddr}`);
 
 		socket.on("data", async (data) => {
 			clientBuffer = Buffer.concat([clientBuffer, data]);
@@ -18,17 +21,17 @@ export async function createServer(db: PGlite, opts = {}) {
 			while (clientBuffer.length > 0) {
 				const message = parseMessage(clientBuffer);
 
-				console.log(`${"-".repeat(42)}\n`);
-				console.log("> Current buffer");
-				console.log(`> Length: ${clientBuffer.length}`);
-				console.log("> Raw:", clientBuffer);
-				console.log(`> Text: ${clientBuffer.toString()}`);
-				console.log("");
-				console.log(`>> Message name: ${message.name}`);
-				console.log(`>> Message length: ${message.length}`);
-				console.log(">> Message buffer raw:", message.buffer);
-				console.log(`>> Message buffer text: ${message.buffer.toString()}`);
-				console.log("");
+				log(`${"-".repeat(42)}\n`);
+				log("> Current buffer");
+				log(`> Length: ${clientBuffer.length}`);
+				log("> Raw:", clientBuffer);
+				log(`> Text: ${clientBuffer.toString()}`);
+				log("");
+				log(`>> Message name: ${message.name}`);
+				log(`>> Message length: ${message.length}`);
+				log(">> Message buffer raw:", message.buffer);
+				log(`>> Message buffer text: ${message.buffer.toString()}`);
+				log("");
 
 				if (message.name === "InsufficientData") {
 					continue;
@@ -42,26 +45,26 @@ export async function createServer(db: PGlite, opts = {}) {
 				const response = await createMessageResponse(message, db);
 				socket.write(response);
 				clientBuffer = Buffer.from(clientBuffer.subarray(message.length));
-				console.log("> Remaining buffer");
-				console.log(`> Length: ${clientBuffer.length}`);
-				console.log("> Raw:", clientBuffer);
-				console.log(`> Text: ${clientBuffer.toString() || "<empty>"}`);
-				console.log("");
+				log("> Remaining buffer");
+				log(`> Length: ${clientBuffer.length}`);
+				log("> Raw:", clientBuffer);
+				log(`> Text: ${clientBuffer.toString() || "<empty>"}`);
+				log("");
 			}
 		});
 
 		socket.on("end", () => {
-			console.log(`Client disconnected: ${clientAddr}`);
+			log(`Client disconnected: ${clientAddr}`);
 		});
 
 		socket.on("error", (err) => {
-			console.log(`Client ${clientAddr} error:`, err);
+			log(`Client ${clientAddr} error:`, err);
 			socket.end();
 		});
 	});
 
 	server.on("error", (err) => {
-		console.log("Server error:", err);
+		log("Server error:", err);
 	});
 
 	return server;
